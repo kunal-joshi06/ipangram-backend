@@ -12,6 +12,11 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "Missing required fields." });
     }
 
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already exists." });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = new User({
