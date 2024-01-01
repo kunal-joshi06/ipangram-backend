@@ -15,7 +15,9 @@ router.post("/", async (req, res) => {
     const department = new Department({ name });
     await department.save();
 
-    res.status(201).json({ message: "Department created successfully!" });
+    res
+      .status(201)
+      .json({ message: "Department created successfully!", department });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -58,7 +60,10 @@ router.put("/:id", async (req, res) => {
     existingDepartment.name = name;
     await existingDepartment.save();
 
-    res.status(200).json({ message: "Department updated successfully!" });
+    res.status(200).json({
+      message: "Department updated successfully!",
+      department: existingDepartment,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -67,15 +72,10 @@ router.put("/:id", async (req, res) => {
 // Delete a department
 router.delete("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const existingDepartment = await Department.findById(id);
-    if (!existingDepartment) {
+    const department = await Department.findByIdAndDelete(req.params.id);
+    if (!department) {
       return res.status(404).json({ message: "Department not found." });
     }
-
-    await existingDepartment.remove();
-
     res.status(200).json({ message: "Department deleted successfully!" });
   } catch (error) {
     res.status(500).json({ error: error.message });

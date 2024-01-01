@@ -6,7 +6,7 @@ const User = require("../models/User");
 // Create a user
 router.post("/", async (req, res) => {
   try {
-    const { email, password, role, location, name } = req.body;
+    const { email, password, role, location, name, department } = req.body;
 
     if (!email || !password || !role || !location || !name) {
       return res.status(400).json({ error: "Missing required fields." });
@@ -20,6 +20,7 @@ router.post("/", async (req, res) => {
       role,
       location,
       name,
+      department,
     });
     await user.save();
 
@@ -77,11 +78,11 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, role, location } = req.body;
+    const { name, email, role, location, department } = req.body;
 
     const user = await User.findByIdAndUpdate(
       id,
-      { name, email, role, location },
+      { name, email, role, location, department },
       { new: true }
     );
     if (!user) {
