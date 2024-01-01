@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
 
     res
       .status(201)
-      .json({ message: "User created successfully! Now you can Login" });
+      .json({ message: "User created successfully! Now you can Login", user });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -77,24 +77,18 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { email, password, role, location } = req.body;
-
-    if (!email || !password || !role || !location) {
-      return res.status(400).json({ error: "Missing required fields." });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const { name, email, role, location } = req.body;
 
     const user = await User.findByIdAndUpdate(
       id,
-      { email, password: hashedPassword, role, location },
+      { name, email, role, location },
       { new: true }
     );
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    res.status(200).json({ message: "User updated successfully!" });
+    res.status(200).json({ message: "User updated successfully!", user });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -103,7 +97,7 @@ router.put("/:id", async (req, res) => {
 // Delete
 router.delete("/:id", async (req, res) => {
   try {
-    const user = await User.findByIdAndRemove(req.params.id);
+    const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
